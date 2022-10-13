@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B824EDEF28F72E870095F462 /* PaletteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B824EDEE28F72E870095F462 /* PaletteStore.swift */; };
 		B8D6B5BB28E4B169002017E5 /* LHEmojiArtApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6B5BA28E4B169002017E5 /* LHEmojiArtApp.swift */; };
 		B8D6B5BD28E4B169002017E5 /* EmojiArtDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6B5BC28E4B169002017E5 /* EmojiArtDocumentView.swift */; };
 		B8D6B5BF28E4B16B002017E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8D6B5BE28E4B16B002017E5 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B824EDEE28F72E870095F462 /* PaletteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteStore.swift; sourceTree = "<group>"; };
 		B8D6B5B728E4B169002017E5 /* LHEmojiArt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LHEmojiArt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8D6B5BA28E4B169002017E5 /* LHEmojiArtApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LHEmojiArtApp.swift; sourceTree = "<group>"; };
 		B8D6B5BC28E4B169002017E5 /* EmojiArtDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiArtDocumentView.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				B8D6B5CE28E4BD50002017E5 /* UtilityExtensions.swift */,
+				B824EDEE28F72E870095F462 /* PaletteStore.swift */,
 				B8D6B5CF28E4BD50002017E5 /* UtilityViews.swift */,
 				B8D6B5BA28E4B169002017E5 /* LHEmojiArtApp.swift */,
 				B8D6B5BC28E4B169002017E5 /* EmojiArtDocumentView.swift */,
@@ -153,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8D6B5D128E4BD50002017E5 /* UtilityViews.swift in Sources */,
+				B824EDEF28F72E870095F462 /* PaletteStore.swift in Sources */,
 				B8D6B5BD28E4B169002017E5 /* EmojiArtDocumentView.swift in Sources */,
 				B8D6B5BB28E4B169002017E5 /* LHEmojiArtApp.swift in Sources */,
 				B8D6B5D028E4BD50002017E5 /* UtilityExtensions.swift in Sources */,
