@@ -16,7 +16,7 @@ struct EmojiArtDocumentView: View {
     var body: some View {
         VStack {
             documentBody
-            palette
+            PaletteChooser(emojiFontSize: defaultEmojiFontSize)
         }
     }
     
@@ -53,7 +53,31 @@ struct EmojiArtDocumentView: View {
 //            .gesture(zoomGesture())
 //            .gesture(panGesture()) // dont do this
             .gesture(panGesture().simultaneously(with: zoomGesture()))
+            .alert(item: $alertToShow) {
+                alertToShow in
+                alertToShow.alert()
+            }
+            .onChange(of: document.backgroundImageFetchStatus) {
+                status in
+                switch status {
+                case .failed(let url):
+                    showBackgroundImageFetchFailedAlert(url)
+                default:
+                    break
+                }
+            }
         }
+    }
+    
+    @State private var alertToShow: IdentifiableAlert?
+    
+    private func showBackgroundImageFetchFailedAlert(_ url: URL) {
+        alertToShow = IdentifiableAlert(id: "fetch failed: " + url.absoluteString, alert: {
+          Alert(title: Text("Background Image Fetch"),
+                message: Text("Couldn't loadd image from \(url)."),
+                dismissButton: .default(Text("OK"))
+          )
+        })
     }
     
     private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
@@ -164,26 +188,4 @@ struct EmojiArtDocumentView: View {
         }
     }
     
-    var palette: some View {
-        ScrollingEmojisView(emojis: testEmojis)
-            .font(.system(size: defaultEmojiFontSize))
-    }
-    
-    private let testEmojis = "🚕🚌🚜🛵🚙🚎🛻🏎🚗🚘🏍🚆🚡✈️🚁🛺⛵️🚤🛥🛰"
-}
-
-struct ScrollingEmojisView: View {
-    let emojis: String
-    
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(emojis.map {String($0)}, id: \.self) {
-                    emoji in
-                    Text(emoji)
-                        .onDrag{ NSItemProvider(object: emoji as NSString) }
-                }
-            }
-        }
-    }
 }

@@ -9,12 +9,15 @@ import SwiftUI
 
 @main
 struct LHEmojiArtApp: App {
-    let document = EmojiArtDocument()
-    let paletteStore = PaletteStore(name: "Default")
+    // @StateObject is single source of truth ??
+    @StateObject var document = EmojiArtDocument()
+    @StateObject var paletteStore = PaletteStore(name: "Default")
     
     var body: some Scene {
         WindowGroup {
             EmojiArtDocumentView(document: document)
+                .environmentObject(paletteStore) // PaletteChooser is child's of EmojiArt
+            // chỉ truyền đc 1 VM theo cách env này 
         }
     }
 }
