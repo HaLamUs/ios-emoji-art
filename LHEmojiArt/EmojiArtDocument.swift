@@ -8,6 +8,7 @@
 // this one is ViewModel: ObservableOject
 //
 import SwiftUI
+import Combine
 
 class EmojiArtDocument: ObservableObject {
     // hold a Model
@@ -91,16 +92,61 @@ class EmojiArtDocument: ObservableObject {
         case failed(URL)
     }
     
+    private var backgroundImageFetchCancellable: AnyCancellable?
+    
     private func fetchBackgroundImageDataIfNeed() {
         backgroundImage = nil
         switch emojiArt.background {
         case .url(let url):
             // fetch url
             backgroundImageFetchStatus = .fetching
+            backgroundImageFetchCancellable?.cancel() // will clean up the current loading image if has
+            
+            //c2 - Combine
+            let session = URLSession.shared
+            let publisher = session.dataTaskPublisher(for: url) //(1)
+                .map {
+                    (data, urlResponse) in // cái này là output của publisher (1)
+                    UIImage(data: data) // ta transfer nó thàng img đây là publisher (2)
+                }
+                .replaceError(with: nil) // we dont want to handle err case so
+                .receive(on: DispatchQueue.main)
+            
+            backgroundImageFetchCancellable = publisher
+                .sink {
+                    [weak self] image in
+                    self?.backgroundImage = image
+                    self?.backgroundImageFetchStatus = (image != nil) ? .idle: .failed(url)
+                }
+            
+            
+//            backgroundImageFetchCancellable = publisher
+//                .sink(receiveCompletion: {
+//                    result in
+//                    switch result {
+//                    case .finished:
+//                        print("success!")
+//                    case .failure(let error):
+//                        print("Error: \(error)")
+//                    }
+//                }, receiveValue: {
+//                    [weak self] image in
+//                    self?.backgroundImage = image
+//                    self?.backgroundImageFetchStatus = (image != nil) ? .idle: .failed(url)
+//                })
+            
+//            backgroundImageFetchCancellable = publisher
+//                .assign(to: \EmojiArtDocument.backgroundImage, on: self)
+            // dùng assign để gán var, nhưng làm ntn lại ko biết đc trạng thái để tắt fetching
+            // use let cancellable = publisher inside this scope will trigger the sink stop right away
+            
+            /* c1
             DispatchQueue.global(qos: .userInitiated).async {
                 let imageData = try? Data(contentsOf: url)
                 DispatchQueue.main.async { [weak self] in
                     // we check after download user change the image?
+             // vì cái này là closure, user có thể đổi ảnh mới trong khi app đang đown ảnh cũ, nên phải so sánh cái url NEW: emojiArt.background
+             vs cái url OLD EmojiArtModel.Background.url(url)
                     if self?.emojiArt.background == EmojiArtModel.Background.url(url) {
                         if let imageData = imageData {
                             self?.backgroundImage = UIImage(data: imageData)
@@ -109,9 +155,12 @@ class EmojiArtDocument: ObservableObject {
                         if self?.backgroundImage == nil {
                             self?.backgroundImageFetchStatus = .failed(url)
                         }
+             // WITHOUT weak self, this will keep this closure 4ever in memory
                     }
                 }
-            }
+            }*/
+            
+            
         case .imageData(let data):
             backgroundImage = UIImage(data: data)
         case .blank:
