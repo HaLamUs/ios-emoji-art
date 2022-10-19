@@ -14,10 +14,15 @@ struct LHEmojiArtApp: App {
     @StateObject var paletteStore = PaletteStore(name: "Default")
     
     var body: some Scene {
-        WindowGroup {
-            EmojiArtDocumentView(document: document)
-                .environmentObject(paletteStore) // PaletteChooser is child's of EmojiArt
-            // chỉ truyền đc 1 VM theo cách env này 
+//        WindowGroup {
+//            EmojiArtDocumentView(document: document)
+//                .environmentObject(paletteStore) // PaletteChooser is child's of EmojiArt
+//            // chỉ truyền đc 1 VM theo cách env này
+//        }
+        DocumentGroup(newDocument: { EmojiArtDocument() }) {
+            config in
+            EmojiArtDocumentView(document: config.document)
+                .environmentObject(paletteStore)
         }
     }
 }
