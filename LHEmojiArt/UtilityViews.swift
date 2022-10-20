@@ -62,6 +62,23 @@ struct AnimatedActionButton: View {
 struct IdentifiableAlert: Identifiable {
     var id: String
     var alert: () -> Alert
+    
+    init(id: String, alert: @escaping () -> Alert) {
+        self.id = id
+        self.alert = alert
+    }
+    
+    // L15 convenience init added between L14 and L15
+    init(id: String, title: String, message: String) {
+        self.id = id
+        alert = { Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("OK"))) }
+    }
+    
+    // L15 convenience init added between L14 and L15
+    init(title: String, message: String) {
+        self.id = title + message
+        alert = { Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("OK"))) }
+    }
 }
 
 // a button that does undo (preferred) or redo
@@ -117,5 +134,73 @@ extension UndoManager {
     }
     var optionalRedoMenuItemTitle: String? {
         canRedo ? redoMenuItemTitle : nil
+    }
+}
+
+
+extension View {
+    // why using ViewBuilder? because if return some View but has if, else diff View
+    // it just coding style make thing small
+    @ViewBuilder
+    func wrappedInNavigationViewToMakeDissmissable(_ dismiss: (()-> Void)?) -> some View {
+        if UIDevice.current.userInterfaceIdiom != .pad, let dismiss = dismiss {
+            // ko cẩn thận xoay ngang nó sẽ ra 2 view 2 bên dù là iphone
+            NavigationView {
+                self
+                    .navigationBarTitleDisplayMode(.inline)
+                    .dismissable(dismiss)
+            }
+            .navigationViewStyle(StackNavigationViewStyle()) // stack instead of side by side
+        } else {
+            self
+        }
+    }
+    
+    @ViewBuilder
+    func dismissable(_ dismiss: (()-> Void)?) -> some View {
+        if UIDevice.current.userInterfaceIdiom != .pad, let dismiss = dismiss {
+            self.toolbar {
+                // use cancel can work on mac os, tv os, iphone
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
+        }
+        else {
+            self
+        }
+    }
+    
+}
+
+extension View {
+    //dùng dont care type do coding style
+    // dùng viewBuilder vì mình đang passing 1 cái closure dạng ViewBuilder 
+    func compactableToolbar<Content>(@ViewBuilder content: () -> Content) -> some View where Content: View {
+        self.toolbar {
+            // .modifier is the way u apply modifier
+            content().modifier(CompactableIntoContextMenu())
+        }
+    }
+}
+
+struct CompactableIntoContextMenu: ViewModifier {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    var compact: Bool { horizontalSizeClass == .compact }
+    
+    func body(content: Content) -> some View {
+        if compact {
+            Button {
+                
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .contextMenu {
+                content
+            }
+        } else {
+            content
+        }
     }
 }

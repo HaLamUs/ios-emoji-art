@@ -39,19 +39,20 @@ struct PaletteManager: View {
             }
             .navigationTitle("Manage Palettes")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem { EditButton() }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    //wrappedValue là mình đang đọc giá trị thực chứ ko phải access binding gì hết 
-                    if presentationMode.wrappedValue.isPresented,
-                       UIDevice.current.userInterfaceIdiom != .phone {
-                        Button("Close") {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
-                }
-//                EditButton() // this will toggle the edit value
-            }
+            .dismissable{ presentationMode.wrappedValue.dismiss() }
+//            .toolbar {
+//                ToolbarItem { EditButton() }
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    //wrappedValue là mình đang đọc giá trị thực chứ ko phải access binding gì hết
+//                    if presentationMode.wrappedValue.isPresented,
+//                       UIDevice.current.userInterfaceIdiom != .phone {
+//                        Button("Close") {
+//                            presentationMode.wrappedValue.dismiss()
+//                        }
+//                    }
+//                }
+////                EditButton() // this will toggle the edit value
+//            }
 //            .environment(\.colorScheme, .dark)
             .environment(\.editMode, $editMode) // #bind env editMode to local @state var
         }
